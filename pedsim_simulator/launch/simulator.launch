@@ -5,6 +5,8 @@
   <arg name="default_queue_size" default="10"/>
   <arg name="max_robot_speed" default="1.5"/>
   <arg name="robot_mode" default="1"/>
+  <arg name="global_link_name" defalut="odom"/>
+  <arg name="base_link_name" default="base_link"/>
   <arg name="enable_groups" default="true"/>
   <arg name="with_robot" default="true"/>
   <arg name="pose_initial_x" default="5.0"/>
@@ -19,6 +21,8 @@
     <param name="default_queue_size" value="$(arg default_queue_size)" type="int"/>
     <param name="max_robot_speed" value="$(arg max_robot_speed)" type="double"/>
     <param name="robot_mode" value="$(arg robot_mode)" type="int"/>
+    <param name="global_link_name" value="$(arg global_link_name)"/>
+    <param name="base_link_name" value="$(arg base_link_name)"/>
     <param name="enable_groups" value="$(arg enable_groups)" type="bool"/>
     <param name="simulation_factor" value="$(arg simulation_factor)" type="double"/>
     <param name="update_rate" value="$(arg update_rate)" type="double"/>

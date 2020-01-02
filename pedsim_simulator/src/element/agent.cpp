@@ -43,6 +43,7 @@ Agent::Agent() {
   Ped::Tagent::setForceFactorObstacle(CONFIG.forceObstacle);
   forceSigmaObstacle = CONFIG.sigmaObstacle;
   Ped::Tagent::setForceFactorSocial(CONFIG.forceSocial);
+  setRelaxationTime(CONFIG.relaxationTime);
   // waypoints
   currentDestination = nullptr;
   waypointplanner = nullptr;
@@ -175,7 +176,7 @@ void Agent::move(double h) {
       Ped::Tagent::setForceFactorDesired(4.2);
 
       Ped::Tagent::setVmax(1.6);
-      Ped::Tagent::SetRadius(0.4);
+      //Ped::Tagent::SetRadius(0.4);
       Ped::Tagent::move(h);
     }
   } else {
@@ -184,8 +185,8 @@ void Agent::move(double h) {
 
   if (getType() == Ped::Tagent::ELDER) {
     // Old people slow!
-    Ped::Tagent::setVmax(0.9);
-    Ped::Tagent::setForceFactorDesired(0.5);
+      //Ped::Tagent::setVmax(0.9);
+      //Ped::Tagent::setForceFactorDesired(0.5);
   }
 
   // inform users
@@ -315,6 +316,8 @@ Ped::Tvector Agent::getObstacleForce() const { return obstacleforce; }
 Ped::Tvector Agent::getMyForce() const { return myforce; }
 
 QPointF Agent::getVisiblePosition() const { return QPointF(getx(), gety()); }
+
+void Agent::setRelaxationTime(double rIn) { relaxationTime = rIn; }
 
 void Agent::setVisiblePosition(const QPointF& positionIn) {
   // check and apply new position

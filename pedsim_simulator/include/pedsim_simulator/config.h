@@ -75,7 +75,8 @@ class Config : public QObject {
   void setGroupRepulsionForce(double valueIn);
   void setRandomForce(double valueIn);
   void setAlongWallForce(double valueIn);
-
+  void setRelaxationTime(double valueIn);
+  
   // Methods
  public:
   // TODO - change to std::unordered_map
@@ -98,6 +99,7 @@ class Config : public QObject {
   double forceGroupRepulsion;
   double forceRandom;
   double forceAlongWall;
+  double relaxationTime;
 
   // robot control
   RobotMode robot_mode;

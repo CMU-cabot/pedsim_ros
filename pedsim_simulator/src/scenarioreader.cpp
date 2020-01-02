@@ -36,6 +36,7 @@
 #include <pedsim_simulator/element/obstacle.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/scenarioreader.h>
+#include <pedsim_simulator/config.h>
 
 #include <QFile>
 #include <iostream>
@@ -83,6 +84,10 @@ void ScenarioReader::processData() {
     const QXmlStreamAttributes elementAttributes = xmlReader.attributes();
 
     if ((elementName == "scenario") || (elementName == "welcome")) {
+	if (elementAttributes.hasAttribute("relaxation-time")) {
+	    const double rt = elementAttributes.value("relaxation-time").toString().toDouble();
+	    CONFIG.setRelaxationTime(rt);
+	}
       // nothing to do
     } else if (elementName == "obstacle") {
       const double x1 = elementAttributes.value("x1").toString().toDouble();
@@ -96,7 +101,7 @@ void ScenarioReader::processData() {
       const double x = elementAttributes.value("x").toString().toDouble();
       const double y = elementAttributes.value("y").toString().toDouble();
       const double r = elementAttributes.value("r").toString().toDouble();
-      // TODO - make the setting of waypoint behavior optional, 
+      // TODO - make the setting of waypoint behavior optional,
       // and default to SIMPLE.
       const int b = elementAttributes.value("b").toString().toInt();
       AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
@@ -134,15 +139,34 @@ void ScenarioReader::processData() {
       const double x = elementAttributes.value("x").toString().toDouble();
       const double y = elementAttributes.value("y").toString().toDouble();
       const int n = elementAttributes.value("n").toString().toInt();
-      const double dx = elementAttributes.value("dx").toString().toDouble();
-      const double dy = elementAttributes.value("dy").toString().toDouble();
-      const int type = elementAttributes.value("type").toString().toInt();
       AgentCluster* agentCluster = new AgentCluster(x, y, n);
-      agentCluster->setDistribution(dx, dy);
+
+      if (elementAttributes.hasAttribute("dx") &&
+          elementAttributes.hasAttribute("dy")) {
+        const double dx = elementAttributes.value("dx").toString().toDouble();
+        const double dy = elementAttributes.value("dy").toString().toDouble();
+        agentCluster->setDistribution(dx, dy);
+      }
+
+      const int type = elementAttributes.value("type").toString().toInt();
+      agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
+
+      if (elementAttributes.hasAttribute("radius")) {
+        const double r = elementAttributes.value("radius").toString().toDouble();
+        agentCluster->setRadius(r);
+      }
 
       /// TODO - change agents Vmax distribution based on agent type
       /// and other force parameters to realize different behaviours
-      agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
+      ///
+      /// Modified: set Vmax distribution if v and vd attributes exist
+      if (elementAttributes.hasAttribute("v") &&
+      elementAttributes.hasAttribute("vd")) {
+        const double v = elementAttributes.value("v").toString().toDouble();
+        const double vd = elementAttributes.value("vd").toString().toDouble();
+        agentCluster->setVmaxDistribution(v, vd);
+      }
+
       SCENE.addAgentCluster(agentCluster);
       currentAgents = agentCluster;
     } else if (elementName == "source") {

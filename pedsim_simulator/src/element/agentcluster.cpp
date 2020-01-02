@@ -43,7 +43,12 @@ AgentCluster::AgentCluster(double xIn, double yIn, int countIn) {
   count = countIn;
   distribution = QSizeF(0, 0);
   agentType = Ped::Tagent::ADULT;
-  shallCreateGroups = true;
+  //ped_agent.cpp defaults
+  agentRadius = 0.35;
+  agentVmaxMean = 1.34;
+  agentVmaxStd = 0.26;
+
+  shallCreateGroups = false;
 };
 
 AgentCluster::~AgentCluster() {}
@@ -55,6 +60,7 @@ QList<Agent*> AgentCluster::dissolve() {
                                                  distribution.width() / 2);
   std::uniform_real_distribution<double> randomY(-distribution.height() / 2,
                                                  distribution.height() / 2);
+  std::normal_distribution<double> vmax(agentVmaxMean, agentVmaxStd);
 
   // create and initialize agents
   for (int i = 0; i < count; ++i) {
@@ -67,6 +73,8 @@ QList<Agent*> AgentCluster::dissolve() {
     if (distribution.height() != 0) randomizedY += randomY(RNG());
     a->setPosition(randomizedX, randomizedY);
     a->setType(agentType);
+    a->SetRadius(agentRadius);
+    a->setVmax(vmax(RNG()));
 
     // add waypoints to the agent
     foreach (Waypoint* waypoint, waypoints)
@@ -157,6 +165,15 @@ void AgentCluster::setType(Ped::Tagent::AgentType typeIn) {
 
   // inform users
   emit typeChanged(agentType);
+}
+
+void AgentCluster::setRadius(double radiusIn) {
+  agentRadius = radiusIn;
+}
+
+void AgentCluster::setVmaxDistribution(double meanIn = 1.34, double stdIn = 0.26) {
+  agentVmaxMean = meanIn;
+  agentVmaxStd = stdIn;
 }
 
 bool AgentCluster::getShallCreateGroups() const {

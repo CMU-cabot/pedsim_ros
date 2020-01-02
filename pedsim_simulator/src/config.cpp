@@ -47,6 +47,7 @@ Config::Config(QObject* parent) {
   forceGroupRepulsion = 1.0;
   forceRandom = 0.1;
   forceAlongWall = 2.0;
+  relaxationTime = 0.5;
 
   cell_width = 1.0;
   cell_height = 1.0;
@@ -130,6 +131,10 @@ void Config::setAlongWallForce(double valueIn) {
   // inform users
   emit forceFactorChanged("alongwall", valueIn);
   emit forceFactorAlongWallChanged(valueIn);
+}
+
+void Config::setRelaxationTime(double valueIn) {
+  relaxationTime = valueIn;
 }
 
 QMap<QString, double> Config::getForceMap() const {

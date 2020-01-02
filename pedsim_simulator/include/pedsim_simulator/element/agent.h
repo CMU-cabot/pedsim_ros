@@ -107,6 +107,7 @@ class Agent : public ScenarioElement, public Ped::Tagent {
   QList<const Agent*> getNeighbors() const;
   void disableForce(const QString& forceNameIn);
   void enableAllForces();
+  void setRelaxationTime(double rIn);
 
   // → Ped::Tagent Overrides/Overloads
  public:

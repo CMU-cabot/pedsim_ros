@@ -250,6 +250,9 @@ void Scene::dissolveClusters() {
   foreach (AgentCluster* cluster, agentClusters) {
     QList<Agent*> newAgents = cluster->dissolve();
 
+    if (!cluster->getShallCreateGroups()) {
+	continue;
+    }
     // divide agents into groups
     QList<AgentGroup*> newGroups = AgentGroup::divideAgents(newAgents);
 

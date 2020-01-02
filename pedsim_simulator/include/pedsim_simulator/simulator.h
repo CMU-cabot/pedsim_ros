@@ -103,6 +103,8 @@ class Simulator {
   ros::NodeHandle nh_;
   bool paused_;
   ros::Timer spawn_timer_;
+  string global_link_name;
+  string base_link_name;
 
   // publishers
   ros::Publisher pub_obstacles_;

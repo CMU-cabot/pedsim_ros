@@ -70,6 +70,8 @@ class AgentCluster : public ScenarioElement {
   void setY(double yIn);
   int getType() const;
   void setType(Ped::Tagent::AgentType typeIn);
+  void setRadius(double radiusIn);
+  void setVmaxDistribution(double meanIn, double stdIn);
   bool getShallCreateGroups() const;
   void setShallCreateGroups(bool shallCreateGroupsIn);
   QSizeF getDistribution() const;
@@ -90,6 +92,8 @@ class AgentCluster : public ScenarioElement {
   int count;
   QSizeF distribution;
   Ped::Tagent::AgentType agentType;
+  double agentRadius;
+  double agentVmaxMean, agentVmaxStd;
   bool shallCreateGroups;
   QList<Waypoint*> waypoints;
 };

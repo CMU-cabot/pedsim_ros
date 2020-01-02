@@ -37,6 +37,8 @@
 #include <pedsim_simulator/simulator.h>
 
 #include <pedsim_utils/geometry.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <math.h>
 
 using namespace pedsim;
 
@@ -63,6 +65,9 @@ Simulator::~Simulator() {
 bool Simulator::initializeSimulation() {
   int queue_size = 0;
   nh_.param<int>("default_queue_size", queue_size, 1);
+  nh_.param<string>("global_link_name", global_link_name, "odom");
+  nh_.param<string>("base_link_name", base_link_name, "base_link");
+
   ROS_INFO_STREAM("Using default queue size of "
                   << queue_size << " for publisher queues... "
                   << (queue_size == 0
@@ -219,11 +224,12 @@ void Simulator::updateRobotPositionFromTF() {
     // Get robot position via TF
     tf::StampedTransform tfTransform;
     try {
-      transform_listener_->lookupTransform("odom", "base_link", ros::Time(0),
+      transform_listener_->lookupTransform(global_link_name, base_link_name, ros::Time(0),
                                            tfTransform);
     } catch (tf::TransformException& e) {
       ROS_WARN_STREAM_THROTTLE(
-          5.0, "TF lookup from base_link to odom failed. Reason: " << e.what());
+          5.0, "TF lookup from " << base_link_name << " to " << 
+          global_link_name << " failed. Reason: " << e.what());
       return;
     }
 
@@ -295,6 +301,13 @@ void Simulator::publishAgents() {
     state.pose.position.x = a->getx();
     state.pose.position.y = a->gety();
     state.pose.position.z = a->getz();
+
+    tf2::Quaternion q;
+    q.setRPY(0, 0, M_PI/2+atan2(a->getvy(),a->getvx()));
+    state.pose.orientation.x = q.x();
+    state.pose.orientation.y = q.y();
+    state.pose.orientation.z = q.z();
+    state.pose.orientation.w = q.w();
 
     state.twist.linear.x = a->getvx();
     state.twist.linear.y = a->getvy();
